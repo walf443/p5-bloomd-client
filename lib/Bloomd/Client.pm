@@ -51,7 +51,7 @@ sub check_multi {
 
     my $result = {};
     while ( my $line = <$sock> ) {
-        if ( $line eq "OK\r\n" ) {
+        if ( $line eq "END\r\n" ) {
             return $result;
         } else {
             if ( $line =~ /^CHECK (\S+) (\d)\r\n/ ) {
