@@ -37,27 +37,27 @@ sub set_multi {
     }
 }
 
-sub test_multi {
+sub check_multi {
     my ($self, @keys) = @_;
 
     my $key = join "\t", @keys;
     my $sock = $self->{sock};
-    print $sock "test $key\r\n";
+    print $sock "check $key\r\n";
     my $result = {};
     while ( my $line = <$sock> ) {
         if ( $line eq "OK\r\n" ) {
             return $result;
         } else {
-            if ( $line =~ /^TEST (\S+) (\d)\r\n/ ) {
+            if ( $line =~ /^CHECK (\S+) (\d)\r\n/ ) {
                 $result->{$1} = $2;
             }
         }
     }
 }
 
-sub test {
+sub check {
     my ($self, $key) = @_;
-    my $result = $self->test_multi($key);
+    my $result = $self->check_multi($key);
     return $result->{$key};
 }
 
@@ -78,8 +78,8 @@ Bloomd::Client -
   use Bloomd::Client;
   my $client = Bloomd::Client->new(server => "localhost:26006");
   $client->set("hoge");
-  $client->test("hoge") #=> 1 # may be.
-  $client->test("bar") #=> 0
+  $client->check("hoge") #=> 1 # may be.
+  $client->check("bar") #=> 0
 
 =head1 DESCRIPTION
 

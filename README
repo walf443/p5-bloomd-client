@@ -3,6 +3,10 @@ NAME
 
 SYNOPSIS
       use Bloomd::Client;
+      my $client = Bloomd::Client->new(server => "localhost:26006");
+      $client->set("hoge");
+      $client->check("hoge") #=> 1 # may be.
+      $client->check("bar") #=> 0
 
 DESCRIPTION
     Bloomd::Client is
