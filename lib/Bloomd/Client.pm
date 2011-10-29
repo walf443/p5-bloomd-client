@@ -28,8 +28,12 @@ sub set_multi {
 
     my $key = join "\t", @keys;
     my $sock = $self->{sock};
-    print $sock "set $key\r\n";
+    print $sock "set $key\r\n"
+        or die "Can't write sock: $!";
+
     my $line = <$sock>;
+    die "Can't read sock: $!" unless defined $line;
+
     if ( $line eq "OK\r\n" ) {
         return 1;
     } else {
@@ -42,7 +46,9 @@ sub check_multi {
 
     my $key = join "\t", @keys;
     my $sock = $self->{sock};
-    print $sock "check $key\r\n";
+    print $sock "check $key\r\n"
+        or die "Can't write sock: $!";
+
     my $result = {};
     while ( my $line = <$sock> ) {
         if ( $line eq "OK\r\n" ) {
@@ -53,6 +59,7 @@ sub check_multi {
             }
         }
     }
+    die "Can't read sock: $!";
 }
 
 sub check {
