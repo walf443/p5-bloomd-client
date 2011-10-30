@@ -4,17 +4,20 @@ use strict;
 use warnings;
 our $VERSION = '0.01';
 use IO::Socket::INET;
+use Sub::Retry;
 
 sub new {
     my ($class, %args) = @_;
 
     $args{server} ||= 'localhost:26006';
-    my $sock = IO::Socket::INET->new(
-        PeerAddr => $args{server},
-        Proto => 'tcp'
-    )
-        or die "Can't connect to @{[ $args{server} ]}";
-    $args{sock} = $sock;
+    $args{max_retry_connect} ||= 3;
+    $args{sock} = Sub::Retry::retry $args{max_retry_connect}, 0.01, sub {
+        IO::Socket::INET->new(
+            PeerAddr => $args{server},
+            Proto => 'tcp'
+        )
+            or die "Can't connect to @{[ $args{server} ]}";
+    };
     bless \%args, $class;
 }
 
